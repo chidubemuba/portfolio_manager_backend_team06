@@ -6,9 +6,12 @@ class Portfolio(db.Model):
     ticker = db.Column(db.String(50))
     quantity = db.Column(db.Integer, nullable=False)
 
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
     def to_dict(self):
         return {
             "id": self.id,
             "ticker": self.ticker,
-            "quantity": self.quantity
+            "quantity": self.quantity,
+            "user_id": self.user_id
         }
