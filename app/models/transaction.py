@@ -5,6 +5,7 @@ class Transaction(db.Model):
     # ticker = db.Column(db.String(50), db.ForeignKey('stock.ticker'), nullable=False)
     ticker = db.Column(db.String(50), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False)
     
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -12,8 +13,9 @@ class Transaction(db.Model):
     def to_dict(self):
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "ticker": self.ticker,
             "quantity": self.quantity,
-            "timestamp": self.timestamp,
-            "user_id": self.user_id
+            "price": self.price,
+            "timestamp": self.timestamp
         }

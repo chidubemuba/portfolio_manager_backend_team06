@@ -6,7 +6,9 @@ class User(db.Model):
     l_name = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     balance = db.Column(db.Float, nullable=False, default=0.0)
+    
     transactions = db.relationship('Transaction', backref='user', lazy=True)
+    holdings = db.relationship('Holding', backref='user', lazy=True)
 
     def to_dict(self):
         return {

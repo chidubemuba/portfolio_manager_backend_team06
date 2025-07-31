@@ -2,12 +2,16 @@ import yfinance as yf
 import pandas as pd
 
 
-class YfinanceService:
+class YFinanceService:
     @classmethod
     def get_stock_data(cls, ticker):
         stock = yf.Ticker(ticker)
         data = stock.history(period="1d")
-        return data
+        
+        if data.empty:
+            raise KeyError(f"Ticker: {ticker} not found in market")
+        
+        return data.iloc[0]
     
     
     @classmethod
@@ -20,3 +24,9 @@ class YfinanceService:
     def get_stock_info(cls, ticker):
         stock = yf.Ticker(ticker)
         return stock.history(period="1mo")
+    
+    
+    @classmethod
+    def get_available_tickers(cls):
+        #TODO: Available Tickers from CSV
+        pass
