@@ -6,7 +6,7 @@ from app.services.yfinance_service import YFinanceService
 
 data_bp = Blueprint('data_bp', __name__)
 
-@data_bp.rout('/', methods=['GET'])
+@data_bp.route('/', methods=['GET'])
 def get_available_tickers():
     try:
         tickers = YFinanceService.get_available_tickers()

@@ -28,25 +28,7 @@ class TransactionService:
     
     @classmethod
     def place_order(cls, transaction: Transaction) -> None:
-        balance = UserService.get_balance(transaction.user_id)
-        holdings: list = UserService.get_holdings(transaction.user_id)
-        
-        if (quantity := transaction.quantity) < 0:
-            user_holding = next((h for h in holdings if h["ticker"] == transaction.ticker), None)
-            
-            if user_holding is None:
-                raise KeyError("Stock not found in portfolio for selling")
-            
-            if user_holding["quantity"] < abs(quantity):
-                raise ValueError("Insufficient stock quantity to sell")
-            
-        else:
-            if balance < transaction.quantity * transaction.price:
-                raise ValueError("Insufficient balance to buy stock")
-        
-        
-        if YFinanceService.get_stock_data(transaction.ticker).empty:
-            raise KeyError(f"Ticker: {transaction.ticker} not found in market")
+        cls.__validate_transaction(transaction)
              
         if transaction.quantity < 0:
             UserService.add_balance(transaction.user_id, abs(transaction.quantity) * transaction.price)
@@ -57,5 +39,58 @@ class TransactionService:
         
         db.session.add(transaction)
         db.session.commit()
+        
+        HoldingService.calculate_avg_price(transaction)
+        
         return transaction.to_dict()
+    
+    
+    @classmethod
+    def __validate_transaction(cls, transaction: Transaction) -> None:
+        if transaction.price <= 0:
+            raise ValueError("Price cannot be zero or negative")
+        
+        if transaction.quantity < 0:
+            cls.__sell_validation(transaction)
+        else:
+            cls.__buy_validation(transaction)
+            
+        cls.__data_validation(transaction)
+        
+        print("Transaction validation passed")
+        
+        
+    @classmethod
+    def __sell_validation(cls, transaction: Transaction) -> None:
+        holdings: list = UserService.get_holdings(transaction.user_id)
+        
+        user_holding = next((h for h in holdings if h["ticker"] == transaction.ticker), None)
+        
+        quantity = transaction.quantity
+        
+        if user_holding is None:
+            raise KeyError("Stock not found in portfolio for selling")
+        
+        if user_holding["quantity"] < abs(quantity):
+            raise ValueError("Insufficient stock quantity to sell")
+        
+        print("Sell validation passed")
+
+    
+    @classmethod
+    def __buy_validation(cls, transaction: Transaction) -> None:
+        balance = UserService.get_balance(transaction.user_id)
+
+        if balance < transaction.quantity * transaction.price:
+            raise ValueError("Insufficient balance to buy stock")
+        
+        print("Buy validation passed")
+    
+    
+    @classmethod
+    def __data_validation(cls, transaction: Transaction) -> None:
+        if YFinanceService.get_stock_data(transaction.ticker).empty:
+            raise KeyError(f"Ticker: {transaction.ticker} not found in market")
+        
+        print("Data validation passed")
     

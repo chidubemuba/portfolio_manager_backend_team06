@@ -1,7 +1,5 @@
 from app.models import db
 from app.models.user import User
-from app.models.holding import Holding
-from app.models.transaction import Transaction
 
 
 class UserService:
@@ -83,6 +81,17 @@ class UserService:
     
     
     @classmethod
+    def get_holding(cls, user_id: int, ticker: str = None):
+        user = User.query.get(user_id)
+        
+        if not user:
+            raise IndexError("User not found")
+        
+        holding = next((h for h in user.holdings if h.ticker == ticker), None)
+        return holding
+            
+    
+    @classmethod
     def get_transactions(cls, user_id: int):
         user = User.query.get(user_id)
         
@@ -93,4 +102,15 @@ class UserService:
             return []
         
         return [t.to_dict() for t in user.transactions]
+    
+    @classmethod
+    def get_transactions_of(cls, user_id: int, ticker: str):
+        user = User.query.get(user_id)
+        
+        if not user:
+            raise IndexError("User not found")
+        
+        transactions = [t.to_dict() for t in user.transactions if t.ticker == ticker]
+        
+        return transactions
     

@@ -1,6 +1,8 @@
 from app.models import db
 from app.models.holding import Holding
+from app.models.transaction import Transaction
 
+from app.services.user_service import UserService
 
 class HoldingService:
     @classmethod
@@ -44,3 +46,23 @@ class HoldingService:
         
         db.session.commit()
 
+    @classmethod
+    def calculate_avg_price(cls, new_transaction: Transaction) -> float:    
+        user_transactions = UserService.get_transactions_of(new_transaction.user_id, new_transaction.ticker)
+        holding = UserService.get_holding(new_transaction.user_id, new_transaction.ticker)
+        
+        if holding and new_transaction.quantity < 0:
+            return holding.avg_price
+                
+        avg_price = new_transaction.price
+                
+        if holding:
+            avg_price = sum(
+                t["price"] * t["quantity"] for t in user_transactions if t["quantity"] > 0
+            ) / sum(
+                t["quantity"] for t in user_transactions
+            )
+            
+        holding.avg_price = avg_price            
+        db.session.commit()
+        return avg_price
