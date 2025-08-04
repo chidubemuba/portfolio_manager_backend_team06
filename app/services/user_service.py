@@ -1,6 +1,8 @@
 from app.models import db
 from app.models.user import User
 
+from app.services.yfinance_service import YFinanceService
+
 
 class UserService:
     @classmethod
@@ -78,6 +80,28 @@ class UserService:
             return []
         
         return [h.to_dict()for h in user.holdings]
+    
+    
+    @classmethod
+    def get_holdings_current_prices(cls, user_id: int):
+        user = User.query.get(user_id)
+        
+        if not user:
+            raise IndexError("User not found")
+        
+        if not user.holdings:
+            return []
+        
+        data = {}
+        for holding in user.holdings:
+            symbol = holding.to_dict().get("ticker", None)
+            
+            if symbol is None:
+                raise IndexError("Ticker not found")
+            
+            data[symbol] = YFinanceService.get_current_price(symbol)
+        
+        return data
     
     
     @classmethod

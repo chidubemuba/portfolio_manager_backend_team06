@@ -17,7 +17,8 @@ class YFinanceService:
     @classmethod
     def get_current_price(cls, ticker):
         data = cls.get_stock_data(ticker)
-        return data['Close'].iloc[-1] if not data.empty else None
+        print(data, ticker)
+        return data['Close'] if not data.empty else None
 
 
     @classmethod
