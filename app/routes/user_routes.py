@@ -45,6 +45,15 @@ def get_user_holdings_current_prices(id):
         return jsonify(UserService.get_holdings_current_prices(id)), 200
     except IndexError as e:
         return jsonify({"message": str(e)}), 404
+    
+    
+@user_bp.route('/<int:id>/balance', methods=['GET'])
+def get_user_balance(id):
+    try:
+        return jsonify(UserService.get_balance(id)), 200
+    except IndexError as e:
+        return jsonify({"message": str(e)}), 404
+    
 
 @user_bp.route('/<int:id>/deposit', methods=['POST'])
 def deposit_user_balance(id):
