@@ -39,6 +39,23 @@ def get_user_holdings(id):
         return jsonify({"message": str(e)}), 404
 
 
+@user_bp.route('/<int:id>/unrealizedGains', methods=['GET'])
+def get_unrealized_gains(id):
+    try:
+        return jsonify(UserService.get_unrealized_gains(id)), 200
+    except IndexError as e:
+        return jsonify({"message": str(e)}), 404
+    
+
+
+@user_bp.route('/<int:id>/realizedGains', methods=['GET'])
+def get_realized_gains(id):
+    try:
+        return jsonify(UserService.get_realized_gains(id)), 200
+    except IndexError as e:
+        return jsonify({"message": str(e)}), 404
+
+
 @user_bp.route('/<int:id>/holdings/prices', methods=['GET'])
 def get_user_holdings_current_prices(id):
     try:

@@ -2,6 +2,7 @@ from app.models import db
 from app.models.user import User
 
 from app.services.yfinance_service import YFinanceService
+from collections import defaultdict,deque
 
 
 class UserService:
@@ -80,6 +81,108 @@ class UserService:
             return []
         
         return [h.to_dict()for h in user.holdings]
+    
+
+    @classmethod
+    def get_unrealized_gains(cls, user_id: int):
+        user = User.query.get(user_id)
+
+        if not user:
+            raise IndexError("User not found")
+        
+        if not user.holdings:
+            return []
+        current_prices = UserService.get_holdings_current_prices(user_id)
+    
+        total_cost = 0.0
+        total_current_value = 0.0
+    
+        for holding in user.holdings:
+            ticker = holding.ticker
+            quantity = holding.quantity
+            average_price = holding.avg_price
+
+            # Skip if ticker not found in current prices
+            if ticker not in current_prices:
+                continue
+
+            current_price = current_prices[ticker]
+
+            total_cost += quantity * average_price
+            total_current_value += quantity * current_price
+
+        if total_cost == 0:
+            return 0.0  
+
+        gain_percent = ((total_current_value - total_cost) / total_cost) * 100 
+        return gain_percent
+    
+    @classmethod
+    def get_realized_gains(cls, user_id: int):
+        user = User.query.get(user_id)
+
+        if not user:
+            raise IndexError("User not found")
+        
+        if not user.transactions:
+
+            return []
+
+    
+        buy_queues = defaultdict(deque)
+        realized_gain = 0
+        realized_cost_basis = 0
+
+        for transaction in user.transactions:
+            ticker = transaction.ticker
+            qty = transaction.quantity
+            price = transaction.price
+
+            if qty > 0:
+            # Buy transaction
+                buy_queues[ticker].append({'quantity': qty, 'price': price})
+            else:
+            # Sell transaction
+                sell_qty = -qty
+                while sell_qty > 0:
+                    if not buy_queues[ticker]:
+                        raise Exception(f"Trying to sell more {ticker} than owned.")
+
+                    lot = buy_queues[ticker][0]
+                    lot_qty = lot['quantity']
+                    buy_price = lot['price']
+
+                    match_qty = min(sell_qty, lot_qty)
+
+                    gain = (price - buy_price) * match_qty
+                    cost_basis = buy_price * match_qty
+
+                    realized_gain += gain
+                    realized_cost_basis += cost_basis
+
+                    # Update or remove the lot
+                    if match_qty == lot_qty:
+                        buy_queues[ticker].popleft()
+                    else:
+                        lot['quantity'] -= match_qty
+
+                    sell_qty -= match_qty
+
+        if realized_cost_basis == 0:
+            gain_percent = 0
+        else:
+            gain_percent = (realized_gain / realized_cost_basis) * 100
+        return gain_percent
+
+
+
+
+
+
+
+
+        
+        
     
     
     @classmethod
