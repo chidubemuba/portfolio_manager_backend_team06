@@ -211,7 +211,6 @@ class UserService:
     
     
     @classmethod
-    @lru_cache()
     def get_asset_alloc(cls, user_id: int):
         holdings = cls.get_holdings(user_id)
         
