@@ -121,6 +121,7 @@ class UserService:
         gain_percent = ((total_current_value - total_cost) / total_cost) * 100 
         return gain_percent
     
+    
     @classmethod
     def get_realized_gains(cls, user_id: int):
         user = User.query.get(user_id)
@@ -143,10 +144,8 @@ class UserService:
             price = transaction.price
 
             if qty > 0:
-            # Buy transaction
                 buy_queues[ticker].append({'quantity': qty, 'price': price})
             else:
-            # Sell transaction
                 sell_qty = -qty
                 while sell_qty > 0:
                     if not buy_queues[ticker]:
@@ -164,7 +163,6 @@ class UserService:
                     realized_gain += gain
                     realized_cost_basis += cost_basis
 
-                    # Update or remove the lot
                     if match_qty == lot_qty:
                         buy_queues[ticker].popleft()
                     else:
@@ -177,16 +175,6 @@ class UserService:
         else:
             gain_percent = (realized_gain / realized_cost_basis) * 100
         return gain_percent
-
-
-
-
-
-
-
-
-        
-        
     
     
     @classmethod
@@ -223,7 +211,6 @@ class UserService:
     
     
     @classmethod
-    @lru_cache()
     def get_asset_alloc(cls, user_id: int):
         holdings = cls.get_holdings(user_id)
         
@@ -256,6 +243,7 @@ class UserService:
             return []
         
         return [t.to_dict() for t in user.transactions]
+    
     
     @classmethod
     def get_transactions_of(cls, user_id: int, ticker: str):

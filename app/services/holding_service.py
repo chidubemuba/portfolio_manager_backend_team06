@@ -50,9 +50,9 @@ class HoldingService:
     def calculate_avg_price(cls, new_transaction: Transaction) -> float:    
         user_transactions = UserService.get_transactions_of(new_transaction.user_id, new_transaction.ticker)
         holding = UserService.get_holding(new_transaction.user_id, new_transaction.ticker)
-        
-        if holding and new_transaction.quantity < 0:
-            return holding.avg_price
+
+        if new_transaction.quantity < 0:
+            return
                 
         avg_price = new_transaction.price
                 
@@ -62,7 +62,7 @@ class HoldingService:
             ) / sum(
                 t["quantity"] for t in user_transactions
             )
-            
+                    
         holding.avg_price = avg_price            
         db.session.commit()
         return avg_price
