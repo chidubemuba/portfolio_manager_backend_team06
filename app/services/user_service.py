@@ -1,5 +1,9 @@
+from functools import lru_cache
+from collections import defaultdict
+
 from app.models import db
 from app.models.user import User
+from app.models.stock import Stock
 
 from app.services.yfinance_service import YFinanceService
 from collections import defaultdict,deque
@@ -216,6 +220,29 @@ class UserService:
         
         holding = next((h for h in user.holdings if h.ticker == ticker), None)
         return holding
+    
+    
+    @classmethod
+    @lru_cache()
+    def get_asset_alloc(cls, user_id: int):
+        holdings = cls.get_holdings(user_id)
+        
+        total_val = 0
+        data = defaultdict(float)
+        for holding in holdings:
+            quantity = holding['quantity']
+            stock = Stock.query.get(holding['ticker'].upper())
+            current_price = YFinanceService.get_current_price(stock.ticker)
+            value = quantity * current_price
+            
+            total_val += value
+            data[stock.asset_class] += value
+        
+        cash = cls.get_balance(user_id)
+        data['cash'] = cash
+        total_val += cash
+        
+        return {k:round((v/total_val*100), 2) for k, v in data.items()}
             
     
     @classmethod
