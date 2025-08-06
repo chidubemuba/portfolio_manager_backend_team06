@@ -55,6 +55,14 @@ def get_user_balance(id):
         return jsonify({"message": str(e)}), 404
     
 
+@user_bp.route('/<int:id>/allocation', methods=['GET'])
+def get_user_allocation(id):
+    try:
+        return jsonify(UserService.get_asset_alloc(id)), 200
+    except IndexError as e:
+        return jsonify({"message": str(e)}), 404
+    
+
 @user_bp.route('/<int:id>/deposit', methods=['POST'])
 def deposit_user_balance(id):
     data = request.get_json()
