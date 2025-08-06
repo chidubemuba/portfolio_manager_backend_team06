@@ -1,6 +1,7 @@
 from app.models import db
 from app.models.holding import Holding
 from app.models.transaction import Transaction
+from app.models.stock import Stock
 
 from app.services.user_service import UserService
 
@@ -21,7 +22,8 @@ class HoldingService:
         
         if not security:
             print("Security not found in portfolio, adding new one")
-            security = Holding(user_id=user_id, ticker=ticker, quantity=0)
+            sec_name = Stock.query.get(ticker)
+            security = Holding(user_id=user_id, ticker=ticker, asset_class=sec_name.asset_class, name=sec_name.name, quantity=0)
             db.session.add(security)
         
         security.quantity += quantity

@@ -1,6 +1,36 @@
 Ticker,Name,Asset Class,Weight (%),Price,Shares,Market Value,Notional Value,Sector,SEDOL,ISIN,Exchange
-AAPL,APPLE INC,Equity,3.72,229.28,"1,462,169.00","335,246,108.32","335,246,108.32",Information Technology,2046251,US0378331005,NASDAQ
+SPY,SPDR S&P 500 ETF Trust,ETF,,520.45,,,,Miscellaneous,2838551,US78462F1030,NYSE Arca
+BTC-USD,Bitcoin,Cryptocurrency,30.0,,0,,,"Crypto",N/A,N/A,Binance
 MSFT,MICROSOFT CORP,Equity,2.93,115.15,"2,292,554.00","263,987,593.10","263,987,593.10",Information Technology,2588173,US5949181045,NASDAQ
+QQQ,Invesco QQQ Trust,ETF,,435.6,,,,Miscellaneous,2433992,US46090E1038,NASDAQ
+ARKK,ARK Innovation ETF,ETF,,48.1,,,,Miscellaneous,BMMV8M0,US00214Q1040,NYSE Arca
+VTI,Vanguard Total Stock Market ETF,ETF,,262.25,,,,Miscellaneous,3007675,US9229087690,NYSE Arca
+XLF,Financial Select Sector SPDR Fund,ETF,,41.5,,,,Financial,2329217,US81369Y6059,NYSE Arca
+VFIAX,Vanguard 500 Index Fund Admiral Shares,Mutual Fund,,480.25,,,,Miscellaneous,,US9229087104,NASDAQ
+SWPPX,Schwab S&P 500 Index Fund,Mutual Fund,,70.05,,,,Miscellaneous,,US8085098554,NYSE Arca
+FXAIX,Fidelity 500 Index Fund,Mutual Fund,,175.65,,,,Miscellaneous,,US3161468061,NYSE Arca
+VTSAX,Vanguard Total Stock Market Index Fund,Mutual Fund,,120.25,,,,Miscellaneous,,US9229087286,NASDAQ
+SWTSX,Schwab Total Stock Market Index Fund,Mutual Fund,,85.3,,,,Miscellaneous,,US8085097564,NYSE Arca
+^GSPC,S&P 500,Index,,5500.25,,,,Index,,,INDEX
+^DJI,Dow Jones Industrial Average,Index,,40500.1,,,,Index,,,INDEX
+^IXIC,NASDAQ Composite,Index,,18000.3,,,,Index,,,INDEX
+^RUT,Russell 2000,Index,,2150.85,,,,Index,,,INDEX
+^N225,Nikkei 225,Index,,41000.65,,,,Index,,,INDEX
+^TNX,10-Year Treasury Note,Bond,,4.15,,,,Government,,,BOND
+^IRX,13-Week Treasury Bill,Bond,,5.3,,,,Government,,,BOND
+^FVX,5-Year Treasury Note,Bond,,3.85,,,,Government,,,BOND
+^TYX,30-Year Treasury Bond,Bond,,4.35,,,,Government,,,BOND
+^SHY,iShares 1-3 Year Treasury Bond ETF,Bond,,81.25,,,,Fixed Income,B1YV5F0,US4642874577,NASDAQ
+ETH-USD,Ethereum,Cryptocurrency,20.0,,0,,,"Crypto",N/A,N/A,Coinbase
+SOL-USD,Solana,Cryptocurrency,10.0,,0,,,"Crypto",N/A,N/A,Binance
+BNB-USD,BNB,Cryptocurrency,8.0,,0,,,"Crypto",N/A,N/A,Binance
+XRP-USD,Ripple,Cryptocurrency,7.0,,0,,,"Crypto",N/A,N/A,Binance
+ADA-USD,Cardano,Cryptocurrency,6.0,,0,,,"Crypto",N/A,N/A,Binance
+DOGE-USD,Dogecoin,Cryptocurrency,5.0,,0,,,"Crypto",N/A,N/A,Binance
+AVAX-USD,Avalanche,Cryptocurrency,4.0,,0,,,"Crypto",N/A,N/A,Binance
+DOT-USD,Polkadot,Cryptocurrency,3.0,,0,,,"Crypto",N/A,N/A,Binance
+MATIC-USD,Polygon,Cryptocurrency,2.0,,0,,,"Crypto",N/A,N/A,Binance
+AAPL,APPLE INC,Equity,3.72,229.28,"1,462,169.00","335,246,108.32","335,246,108.32",Information Technology,2046251,US0378331005,NASDAQ
 AMZN,AMAZON COM INC,Equity,2.69,"1,971.31","122,971.00","242,413,962.01","242,413,962.01",Consumer Discretionary,2000019,US0231351067,NASDAQ
 BRKB,BERKSHIRE HATHAWAY INC CLASS B,Equity,1.40,215.29,"585,969.00","126,153,266.01","126,153,266.01",Financials,2073390,US0846707026,New York Stock Exchange Inc.
 JPM,JPMORGAN CHASE & CO,Equity,1.28,113.97,"1,011,631.00","115,295,585.07","115,295,585.07",Financials,2190385,US46625H1005,New York Stock Exchange Inc.
