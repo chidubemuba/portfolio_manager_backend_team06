@@ -95,7 +95,8 @@ class UserService:
             raise IndexError("User not found")
         
         if not user.holdings:
-            return []
+            return 0
+        
         current_prices = UserService.get_holdings_current_prices(user_id)
     
         total_cost = 0.0
@@ -105,18 +106,10 @@ class UserService:
             ticker = holding.ticker
             quantity = holding.quantity
             average_price = holding.avg_price
-
-            # Skip if ticker not found in current prices
-            if ticker not in current_prices:
-                continue
-
             current_price = current_prices[ticker]
 
             total_cost += quantity * average_price
             total_current_value += quantity * current_price
-
-        if total_cost == 0:
-            return 0.0  
 
         gain_percent = ((total_current_value - total_cost) / total_cost) * 100 
         return gain_percent
@@ -130,15 +123,14 @@ class UserService:
             raise IndexError("User not found")
         
         if not user.transactions:
+            return 0
 
-            return []
-
-    
         buy_queues = defaultdict(deque)
         realized_gain = 0
         realized_cost_basis = 0
-
-        for transaction in user.transactions:
+        
+        sorted_trans = sorted(user.transactions, key=lambda x: x.timestamp)
+        for transaction in sorted_trans:
             ticker = transaction.ticker
             qty = transaction.quantity
             price = transaction.price
@@ -148,9 +140,6 @@ class UserService:
             else:
                 sell_qty = -qty
                 while sell_qty > 0:
-                    if not buy_queues[ticker]:
-                        raise Exception(f"Trying to sell more {ticker} than owned.")
-
                     lot = buy_queues[ticker][0]
                     lot_qty = lot['quantity']
                     buy_price = lot['price']

@@ -3,6 +3,8 @@ from app.models.holding import Holding
 from app.models.transaction import Transaction
 from app.models.stock import Stock
 
+from datetime import datetime
+
 from app.services.user_service import UserService
 
 class HoldingService:
@@ -54,16 +56,27 @@ class HoldingService:
         holding = UserService.get_holding(new_transaction.user_id, new_transaction.ticker)
 
         if new_transaction.quantity < 0:
-            return
+            return holding.avg_price if holding else 0.0
                 
         avg_price = new_transaction.price
                 
         if holding:
-            avg_price = sum(
-                t["price"] * t["quantity"] for t in user_transactions if t["quantity"] > 0
-            ) / sum(
-                t["quantity"] for t in user_transactions
-            )
+            sorted_trans = sorted(user_transactions, key=lambda x: x["timestamp"])
+            quantity = 0
+            weighted_price = 0
+            
+            for t in sorted_trans:
+                quantity += t["quantity"]
+                
+                if t["quantity"] > 0:
+                    weighted_price += (t["price"] * t["quantity"])
+                    
+                if quantity == 0:
+                    weighted_price = 0
+                    quantity = 0
+            
+            if quantity > 0:                    
+                avg_price = weighted_price / quantity
                     
         holding.avg_price = avg_price            
         db.session.commit()
