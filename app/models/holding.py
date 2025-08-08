@@ -1,6 +1,8 @@
 from . import db
 
 class Holding(db.Model):
+    __tablename__ = "holding"
+
     id = db.Column(db.Integer, primary_key=True)
     ticker = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(50), nullable=False)

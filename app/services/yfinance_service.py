@@ -23,7 +23,6 @@ class YFinanceService:
     
     
     @classmethod
-    @lru_cache()
     def get_current_price(cls, ticker):
         data = cls.get_stock_data(ticker)
         return data['Close'] if not data.empty else None
@@ -104,9 +103,7 @@ class YFinanceService:
             data.append(res)
         
         cls.__delete_delisted(delisted)
-        
-        print(data)
-        
+                
     
         
         

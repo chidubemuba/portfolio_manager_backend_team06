@@ -1,6 +1,8 @@
 from . import db
 
 class Stock(db.Model):
+    __tablename__ = "stock"
+
     ticker = db.Column(db.String(50), primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     asset_class = db.Column(db.String(50), nullable=False)

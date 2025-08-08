@@ -1,6 +1,8 @@
 from . import db
 
 class User(db.Model):
+    __tablename__ = "user"
+
     id = db.Column(db.Integer, primary_key=True)
     f_name = db.Column(db.String(50), nullable=False)
     l_name = db.Column(db.String(50), nullable=False)
@@ -9,6 +11,7 @@ class User(db.Model):
     
     transactions = db.relationship('Transaction', backref='user', lazy=True)
     holdings = db.relationship('Holding', backref='user', lazy=True)
+    growth = db.relationship('Snapshot', backref='user', lazy=True)
 
     def to_dict(self):
         return {
