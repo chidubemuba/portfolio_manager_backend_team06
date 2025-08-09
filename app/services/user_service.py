@@ -100,25 +100,55 @@ class UserService:
         if not user.holdings:
             return 0
         
-        current_prices = cls.get_holdings_current_prices(user_id)
-    
-        total_cost = 0.0
-        total_current_value = 0.0
-    
-        for holding in user.holdings:
-            ticker = holding.ticker
-            quantity = holding.quantity
-            average_price = holding.avg_price
-            current_price = current_prices[ticker]
+        sorted_trans = sorted(user.transactions, key=lambda x: x.timestamp)
 
-            total_cost += quantity * average_price
-            total_current_value += quantity * current_price
-            
-        gain = (total_current_value - total_cost)
-        gain_percent = (gain / total_cost) * 100 
-        return {'percentage': gain_percent, 'value': gain}
-    
-    
+        fifo_queues = {}
+
+        for tx in sorted_trans:
+            ticker = tx.ticker
+            qty = tx.quantity
+            price = tx.price
+
+            if ticker not in fifo_queues:
+                fifo_queues[ticker] = []
+
+            if qty > 0:
+                fifo_queues[ticker].append({'quantity': qty, 'price': price})
+            else:
+                sell_qty = -qty
+                queue = fifo_queues[ticker]
+
+                while sell_qty > 0 and queue:
+                    lot = queue[0]
+                    lot_qty = lot['quantity']
+                    matched_qty = min(sell_qty, lot_qty)
+
+                    lot['quantity'] -= matched_qty
+                    sell_qty -= matched_qty
+
+                    if lot['quantity'] == 0:
+                        queue.pop(0)
+
+                if sell_qty > 0:
+                    print(f"Warning: Selling more shares than owned for {ticker}")
+
+            current_prices = cls.get_holdings_current_prices(user_id)
+
+            total_cost = 0.0
+            total_current_value = 0.0
+
+            for ticker, queue in fifo_queues.items():
+                current_price = current_prices.get(ticker, 0)
+                for lot in queue:
+                    total_cost += lot['quantity'] * lot['price']
+                    total_current_value += lot['quantity'] * current_price
+
+            unrealized_gain = total_current_value - total_cost
+            unrealized_gain_percent = (unrealized_gain / total_cost) * 100 if total_cost > 0 else 0
+
+        return {'value': unrealized_gain, 'percentage': unrealized_gain_percent}
+        
+        
     @classmethod
     def get_realized_gains(cls, user_id: int):
         user = cls.get_user(user_id, to_dict=False)
